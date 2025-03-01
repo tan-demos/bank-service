@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" xmlns="https://logging.apache.org/xml/ns"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="
+                   https://logging.apache.org/xml/ns
+                   https://logging.apache.org/xml/ns/log4j-config-2.xsd">
+    <Properties>
+        <Property name="defaultPatternLayout">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%F:%L] %C{1.}: %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE">
+            <PatternLayout pattern="${defaultPatternLayout}"/>
+        </Console>
+        <File name="MAIN" fileName="logs/main.log">
+            <PatternLayout pattern="${defaultPatternLayout}"/>
+        </File>
+        <File name="STRUCTURED" fileName="logs/structured.log">
+            <JsonTemplateLayout/>
+        </File>
+        <File name="DEBUG_LOG" fileName="logs/debug.log">
+            <PatternLayout pattern="${defaultPatternLayout}"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE" level="WARN" />
+            <AppenderRef ref="MAIN"/>
+            <AppenderRef ref="STRUCTURED"/>
+        </Root>
+        <Logger name="com.example" level="DEBUG">
+            <AppenderRef ref="DEBUG_LOG"/>
+        </Logger>
+    </Loggers>
+</Configuration>
