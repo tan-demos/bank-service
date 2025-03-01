@@ -11,11 +11,13 @@ import org.springframework.context.annotation.Configuration;
 public class RepositoryBeanConfig {
     @Bean
     public AccountRepository accountRepository() {
+        // TODO: new CachedAccountRepository(new AccountRepositoryImpl())
         return new AccountRepositoryImpl();
     }
 
     @Bean
     public TransactionRepository transactionRepository() {
+        // TODO: new CachedTransactionRepository(new TransactionRepositoryImpl())
         return new TransactionRepositoryImpl();
     }
 }
