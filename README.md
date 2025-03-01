@@ -14,8 +14,9 @@
 7. For the transaction type, current implementation Only supports `TRANSFER`, it doesn't support `DEPOSIT` or `WITHDRAWAL`.  
 8. To avoid deadlock in db transactions, it's better to limit db transaction wait timeout. Current implementation also set db transaction timeout in class `TransactionExecutor` 
    
-Sorry, I was a little busy in the past week, didn't get enough time to work on this task. 
+####Sorry, I was a little busy in the past week, didn't get enough time to work on this task.   
+
 To-do: 
 1. Deploy and test in K8S cluster 
 2. Resilience testing
-3. Performance testing  
+3. Performance testing
