@@ -31,6 +31,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
+
+	// Micrometer and Spring Boot Actuator are closely related but serve distinct roles in the monitoring and observability ecosystem. Their relationship is complementary: Actuator provides the infrastructure to expose monitoring data, while Micrometer provides the metrics collection and instrumentation framework that Actuator leverages
+
 	// Spring Boot Starter for Actuator (includes metrics support)
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
