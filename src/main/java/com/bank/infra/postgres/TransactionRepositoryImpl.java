@@ -1,5 +1,6 @@
 package com.bank.infra.postgres;
 
+import com.bank.domain.model.Page;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
 import com.bank.infra.postgres.mapper.TransactionMapper;
@@ -30,5 +31,12 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     public boolean changeStatusAndCompletedAt(long id, TransactionStatus oldStatus, TransactionStatus newStatus, Instant completedAt) {
         var count = mapper.changeStatusAndCompletedAt(id, oldStatus, newStatus, completedAt);
         return count > 0;
+    }
+
+    @Override
+    public Page<Transaction> getPage(int page, int size) {
+        var data = mapper.list(page * size, size);
+        var total = mapper.count();
+        return Page.<Transaction>builder().data(data).page(page).size(size).totalCount(total).build();
     }
 }

@@ -1,6 +1,7 @@
 package com.bank.infra.postgres;
 
 import com.bank.domain.model.Account;
+import com.bank.domain.model.Page;
 import com.bank.infra.postgres.mapper.AccountMapper;
 import com.bank.domain.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,12 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public int changeBalance(long id, BigDecimal change) {
         return mapper.changeBalance(id, change);
+    }
+
+    @Override
+    public Page<Account> getPage(int page, int size) {
+        var data = mapper.list(page * size, size);
+        var total = mapper.count();
+        return Page.<Account>builder().data(data).page(page).size(size).totalCount(total).build();
     }
 }

@@ -1,9 +1,6 @@
 package com.bank.domain.service.impl;
 
-import com.bank.domain.model.CreateTransactionParams;
-import com.bank.domain.model.Transaction;
-import com.bank.domain.model.TransactionStatus;
-import com.bank.domain.model.TransactionType;
+import com.bank.domain.model.*;
 import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.repository.TransactionRepository;
 import com.bank.domain.service.TransactionExecutor;
@@ -95,5 +92,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Optional<Transaction> getById(long transactionId) {
         return transactionRepository.getById(transactionId);
+    }
+
+    @Override
+    public Page<Transaction> getPage(int page, int size) {
+        return transactionRepository.getPage(page, size);
     }
 }

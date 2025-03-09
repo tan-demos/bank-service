@@ -1,6 +1,7 @@
 package com.bank.domain.service.impl;
 
 import com.bank.domain.model.Account;
+import com.bank.domain.model.Page;
 import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.service.AccountService;
 import com.bank.exception.BadRequestException;
@@ -43,5 +44,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<Account> getById(long id) {
         return accountRepository.getById(id);
+    }
+
+    @Override
+    public Page<Account> getPage(int page, int size) {
+        return accountRepository.getPage(page, size);
     }
 }

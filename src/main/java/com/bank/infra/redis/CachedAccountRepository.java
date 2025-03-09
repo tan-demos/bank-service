@@ -1,6 +1,7 @@
 package com.bank.infra.redis;
 
 import com.bank.domain.model.Account;
+import com.bank.domain.model.Page;
 import com.bank.domain.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,5 +61,10 @@ public class CachedAccountRepository implements AccountRepository {
 
     private String getCacheKey(long id) {
         return String.format("account:%d", id);
+    }
+
+    @Override
+    public Page<Account> getPage(int page, int size) {
+        return delegate.getPage(page, size);
     }
 }

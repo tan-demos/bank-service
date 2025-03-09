@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 
-public interface TransactionRepository {
+public interface TransactionRepository extends PagingRepository<Transaction> {
     void insert(Transaction transaction);
     Optional<Transaction> getById(long id);
     boolean changeStatusAndCompletedAt(long id, TransactionStatus oldStatus, TransactionStatus newStatus, Instant completedAt);

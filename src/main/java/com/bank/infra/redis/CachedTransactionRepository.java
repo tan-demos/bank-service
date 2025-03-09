@@ -1,6 +1,6 @@
 package com.bank.infra.redis;
 
-import com.bank.domain.model.Account;
+import com.bank.domain.model.Page;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
 import com.bank.domain.repository.TransactionRepository;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -57,5 +56,10 @@ public class CachedTransactionRepository implements TransactionRepository {
 
     private String getCacheKey(long id) {
         return String.format("tx:%d", id);
+    }
+
+    @Override
+    public Page<Transaction> getPage(int page, int size) {
+        return delegate.getPage(page, size);
     }
 }

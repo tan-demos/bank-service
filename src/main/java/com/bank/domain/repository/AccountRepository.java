@@ -5,7 +5,7 @@ import com.bank.domain.model.Account;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public interface AccountRepository {
+public interface AccountRepository extends PagingRepository<Account> {
     void insert(Account account);
     Optional<Account> getById(long id);
     Optional<BigDecimal> getBalanceForUpdate(long id);
