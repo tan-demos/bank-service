@@ -31,6 +31,11 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
+	// Spring Boot Starter for Actuator (includes metrics support)
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+	// Micrometer Prometheus registry (optional, for Prometheus integration)
+	implementation("io.micrometer:micrometer-registry-prometheus")
 
 	implementation(files("libs/bank-service-api-1.0.0.jar"))
 
