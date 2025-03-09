@@ -7,6 +7,7 @@ import com.bank.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ public class AccountServiceImpl implements AccountService {
     private final static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Autowired
+    @Qualifier("cachedAccountRepository")
     private AccountRepository accountRepository;
 
     @Override

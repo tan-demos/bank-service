@@ -2,40 +2,63 @@ package com.bank.infra.redis;
 
 import com.bank.domain.model.Account;
 import com.bank.domain.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Optional;
 
-// TODO: cache account data for read requests
-
+@Repository("cachedAccountRepository")
 public class CachedAccountRepository implements AccountRepository {
-    private final AccountRepository delegate;
 
-    public CachedAccountRepository(AccountRepository delegate) {
-        this.delegate = delegate;
-    }
+
+    @Autowired
+    @Qualifier("defaultAccountRepository")
+    private AccountRepository delegate;
+
+    @Autowired
+    private RedisTemplate<String, Account> redisTemplate;
+
+    @Value("${com.bank.cache.redis.ttl-minutes}")
+    private int cacheTtlMinutes;
 
     @Override
     public void insert(Account account) {
-        // write into database
-        // delete from cache
+        delegate.insert(account);
+        redisTemplate.delete(String.valueOf(account.getId()));
     }
 
     @Override
     public Optional<Account> getById(long id) {
-        return Optional.empty();
+        var key = getCacheKey(id);
+        var account = redisTemplate.opsForValue().get(key);
+        if (account == null) {
+            var optionalAccount = delegate.getById(id);
+            if (optionalAccount.isPresent()) {
+                account = optionalAccount.get();
+                redisTemplate.opsForValue().set(key, account, Duration.ofMinutes(cacheTtlMinutes));
+            }
+        }
+        return Optional.ofNullable(account);
     }
 
     @Override
     public Optional<BigDecimal> getBalanceForUpdate(long id) {
-        // TODO: this method should always call database directly
-        return Optional.empty();
+        return delegate.getBalanceForUpdate(id);
     }
 
     @Override
     public int changeBalance(long id, BigDecimal change) {
-        // write into database
-        // delete from cache
-        return 0;
+        var result = delegate.changeBalance(id, change);
+        redisTemplate.delete(getCacheKey(id));
+        return result;
+    }
+
+    private String getCacheKey(long id) {
+        return String.format("account:%d", id);
     }
 }

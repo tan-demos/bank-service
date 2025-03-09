@@ -21,10 +21,10 @@ import java.util.Optional;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     @Autowired
-    @Qualifier("defaultAccountRepository")
+    @Qualifier("cachedAccountRepository")
     private AccountRepository accountRepository;
     @Autowired
-    @Qualifier("defaultTransactionRepository")
+    @Qualifier("cachedTransactionRepository")
     private TransactionRepository transactionRepository;
     @Autowired
     private TransactionExecutor transactionExecutor;

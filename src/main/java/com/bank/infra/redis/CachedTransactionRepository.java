@@ -1,42 +1,61 @@
 package com.bank.infra.redis;
 
+import com.bank.domain.model.Account;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
 import com.bank.domain.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
 
-// TODO: cache transaction data for read requests
-
+@Repository("cachedTransactionRepository")
 public class CachedTransactionRepository implements TransactionRepository {
-    private final TransactionRepository delegate;
 
-    public CachedTransactionRepository(TransactionRepository delegate) {
-        this.delegate = delegate;
-    }
+    @Autowired
+    @Qualifier("defaultTransactionRepository")
+    private TransactionRepository delegate;
+
+    @Autowired
+    private RedisTemplate<String, Transaction> redisTemplate;
+
+    @Value("${com.bank.cache.redis.ttl-minutes}")
+    private int cacheTtlMinutes;
 
     @Override
     public void insert(Transaction transaction) {
-        // write into database
-        // delete from cache
+        delegate.insert(transaction);
+        redisTemplate.delete(String.valueOf(transaction.getId()));
     }
 
     @Override
     public Optional<Transaction> getById(long id) {
-        // TODO:
-        // read from cache
-        // read from db if not found
-        // update cache
-        return Optional.empty();
+        var transaction = redisTemplate.opsForValue().get(String.valueOf(id));
+        if (transaction == null) {
+            var optionalAccount = delegate.getById(id);
+            if (optionalAccount.isPresent()) {
+                transaction = optionalAccount.get();
+                redisTemplate.opsForValue().set(String.valueOf(id), transaction, Duration.ofMinutes(cacheTtlMinutes));
+            }
+        }
+        return Optional.ofNullable(transaction);
     }
 
     @Override
     public boolean changeStatusAndCompletedAt(long id, TransactionStatus oldStatus, TransactionStatus newStatus, Instant completedAt) {
-        // write into database
-        // delete from cache
-        return false;
+        var result = delegate.changeStatusAndCompletedAt(id, oldStatus, newStatus, completedAt);
+        redisTemplate.delete(getCacheKey(id));
+        return result;
+    }
+
+    private String getCacheKey(long id) {
+        return String.format("tx:%d", id);
     }
 }

@@ -27,6 +27,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	// Spring Boot Starter for Redis (includes Spring Data Redis and Lettuce by default)
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 
 	implementation(files("libs/bank-service-api-1.0.0.jar"))
 
