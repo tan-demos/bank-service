@@ -7,11 +7,12 @@ import com.bank.domain.repository.TransactionRepository;
 import com.bank.domain.service.TransactionExecutor;
 import com.bank.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 
+@Component
 public class TransactionExecutorImpl implements TransactionExecutor {
     @Autowired
     private AccountRepository accountRepository;

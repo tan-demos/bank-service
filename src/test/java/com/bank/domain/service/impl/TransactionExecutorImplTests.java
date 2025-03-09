@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -43,16 +44,16 @@ public class TransactionExecutorImplTests {
     @Test
     void testExecuteTransaction() {
         when(accountRepository.getBalanceForUpdate(transaction.getFromAccountId())).thenReturn(Optional.of(transaction.getAmount().add(new BigDecimal("1"))));
-        when(accountRepository.changeBalance(transaction.getFromAccountId(), transaction.getAmount().negate())).thenReturn(Optional.of(1));
-        when(accountRepository.changeBalance(transaction.getToAccountId(),transaction.getAmount())).thenReturn(Optional.of(1));
-        when(transactionRepository.changeStatusAndCompletedAt(eq(transaction.getId()), eq(TransactionStatus.PENDING), eq(TransactionStatus.SUCCEEDED), any(ZonedDateTime.class))).thenReturn(true);
+        when(accountRepository.changeBalance(transaction.getFromAccountId(), transaction.getAmount().negate())).thenReturn(1);
+        when(accountRepository.changeBalance(transaction.getToAccountId(),transaction.getAmount())).thenReturn(1);
+        when(transactionRepository.changeStatusAndCompletedAt(eq(transaction.getId()), eq(TransactionStatus.PENDING), eq(TransactionStatus.SUCCEEDED), any(Instant.class))).thenReturn(true);
 
         assertDoesNotThrow(() -> transactionExecutor.execute(transaction));
 
         verify(accountRepository, times(1)).getBalanceForUpdate(transaction.getFromAccountId());
         verify(accountRepository, times(1)).changeBalance(transaction.getFromAccountId(), transaction.getAmount().negate());
         verify(accountRepository, times(1)).changeBalance(transaction.getToAccountId(),transaction.getAmount());
-        verify(transactionRepository, times(1)).changeStatusAndCompletedAt(eq(transaction.getId()), eq(TransactionStatus.PENDING), eq(TransactionStatus.SUCCEEDED), any(ZonedDateTime.class));
+        verify(transactionRepository, times(1)).changeStatusAndCompletedAt(eq(transaction.getId()), eq(TransactionStatus.PENDING), eq(TransactionStatus.SUCCEEDED), any(Instant.class));
     }
 
     @Test

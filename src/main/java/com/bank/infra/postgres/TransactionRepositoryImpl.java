@@ -5,10 +5,12 @@ import com.bank.domain.model.TransactionStatus;
 import com.bank.infra.postgres.mapper.TransactionMapper;
 import com.bank.domain.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.Optional;
 
+@Repository("defaultTransactionRepository")
 public class TransactionRepositoryImpl implements TransactionRepository {
     @Autowired
     private TransactionMapper mapper;

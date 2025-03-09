@@ -12,14 +12,19 @@ import com.bank.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
 
+@Service
 public class TransactionServiceImpl implements TransactionService {
     @Autowired
+    @Qualifier("defaultAccountRepository")
     private AccountRepository accountRepository;
     @Autowired
+    @Qualifier("defaultTransactionRepository")
     private TransactionRepository transactionRepository;
     @Autowired
     private TransactionExecutor transactionExecutor;
