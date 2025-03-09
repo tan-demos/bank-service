@@ -5,6 +5,7 @@ import com.bank.domain.model.TransactionStatus;
 import com.bank.domain.repository.TransactionRepository;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
 
 
@@ -33,7 +34,7 @@ public class CachedTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public boolean changeStatusAndCompletedAt(long id, TransactionStatus oldStatus, TransactionStatus newStatus, Timestamp completedAt) {
+    public boolean changeStatusAndCompletedAt(long id, TransactionStatus oldStatus, TransactionStatus newStatus, Instant completedAt) {
         // write into database
         // delete from cache
         return false;

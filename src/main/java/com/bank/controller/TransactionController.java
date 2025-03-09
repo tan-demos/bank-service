@@ -6,6 +6,7 @@ import com.bank.controller.utils.TransactionUtil;
 import com.bank.domain.model.CreateTransactionParams;
 import com.bank.domain.service.TransactionService;
 import com.bank.exception.TransactionNotFoundException;
+import com.bank.util.annotation.AutoLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
+
+    @AutoLogging
     @PostMapping("")
     public Transaction create(@RequestBody CreateTransactionRequest request) {
         var params = CreateTransactionParams.builder().
@@ -28,11 +31,13 @@ public class TransactionController {
         return TransactionUtil.fromDomain(transactionService.create(params));
     }
 
+    @AutoLogging
     @PostMapping("/{id}/submit")
     public Transaction submit(@PathVariable long id) {
         return TransactionUtil.fromDomain(transactionService.submit(id));
     }
 
+    @AutoLogging
     @GetMapping("/{id}")
     public Transaction getById(@PathVariable long id) {
         var optionalTransaction = transactionService.getById(id);

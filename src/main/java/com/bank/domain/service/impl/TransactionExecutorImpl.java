@@ -49,7 +49,7 @@ public class TransactionExecutorImpl implements TransactionExecutor {
         if (!transactionRepository.changeStatusAndCompletedAt(transaction.getId(),
                 TransactionStatus.PENDING,
                 TransactionStatus.SUCCEEDED,
-                Timestamp.from(Instant.now()))) {
+                Instant.now())) {
             throw new IllegalStateException(String.format("unable to change status of transaction %d", transaction.getId()));
         }
     }
