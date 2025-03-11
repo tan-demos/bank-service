@@ -16,10 +16,10 @@ import java.time.Instant;
 @Component
 public class TransactionExecutorImpl implements TransactionExecutor {
     @Autowired
-    @Qualifier("defaultAccountRepository")
+    @Qualifier("cachedAccountRepository")
     private AccountRepository accountRepository;
     @Autowired
-    @Qualifier("defaultTransactionRepository")
+    @Qualifier("cachedTransactionRepository")
     private TransactionRepository transactionRepository;
 
     @Override

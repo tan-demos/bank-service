@@ -25,6 +25,12 @@ public interface TransactionMapper {
                 FROM tx
                 WHERE id=#{id}
             """)
+    @Results({
+            @Result(property = "fromAccountId", column = "from_account_id"),
+            @Result(property = "toAccountId", column = "to_account_id"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "completedAt", column = "completed_at")
+    })
     Optional<Transaction> getById(long id);
 
     @Update("""
@@ -48,6 +54,12 @@ public interface TransactionMapper {
                 ORDER BY id ASC
                 LIMIT #{limit}
             """)
+    @Results({
+            @Result(property = "fromAccountId", column = "from_account_id"),
+            @Result(property = "toAccountId", column = "to_account_id"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "completedAt", column = "completed_at")
+    })
     List<Transaction> list(int offset, int limit);
 
     @Select("SELECT COUNT(*) FROM tx")

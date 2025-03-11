@@ -30,7 +30,7 @@ public class CachedAccountRepository implements AccountRepository {
     @Override
     public void insert(Account account) {
         delegate.insert(account);
-        redisTemplate.delete(String.valueOf(account.getId()));
+        redisTemplate.delete(getCacheKey(account.getId()));
     }
 
     @Override

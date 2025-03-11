@@ -29,11 +29,17 @@ public class AutoLoggingAspect {
         if (annotation.input()) {
             logger.info("{} input: {}", methodDescription, joinPoint.getArgs());
         }
-        Object output = joinPoint.proceed();
-        if (annotation.output()) {
-            logger.info("{} output: {}", methodDescription, output);
+
+        try {
+            Object output = joinPoint.proceed();
+            if (annotation.output()) {
+                logger.info("{} output: {}", methodDescription, output);
+            }
+            return output;
+        } catch (Exception e) {
+            logger.error(methodDescription, e);
+            throw e;
         }
-        return output;
     }
 
     private String getMethodDescription(MethodSignature signature) {

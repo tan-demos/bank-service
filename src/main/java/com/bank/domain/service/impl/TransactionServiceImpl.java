@@ -17,6 +17,9 @@ import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
+
     @Autowired
     @Qualifier("cachedAccountRepository")
     private AccountRepository accountRepository;
@@ -26,10 +29,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionExecutor transactionExecutor;
 
-    private final static Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
-
     @Override
-    public Transaction create(CreateTransactionParams params)  {
+    public Transaction create(CreateTransactionParams params) {
         if (params.getType() != TransactionType.TRANSFER) {
             throw new BadRequestException("Invalid transaction type: only support transfer");
         }
@@ -57,7 +58,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         accountRepository.getById(params.getToAccountId())
-                .orElseThrow(()-> new AccountNotFoundException(params.getFromAccountId()));
+                .orElseThrow(() -> new AccountNotFoundException(params.getFromAccountId()));
 
         var transaction = Transaction.builder().
                 type(params.getType()).
@@ -84,8 +85,14 @@ public class TransactionServiceImpl implements TransactionService {
             return transaction;
         }
 
+        logger.info("Starting transaction {}: {}->{} {}",
+                transaction.getId(),
+                transaction.getFromAccountId(),
+                transaction.getToAccountId(),
+                transaction.getAmount());
+
         transactionExecutor.execute(transaction);
-        logger.info("Completed transaction {}", transaction.getId());
+        logger.info("Completed transaction: id={}, status={}, completedAt={}", transaction.getId(), transaction.getStatus(), transaction.getCompletedAt());
         return transactionRepository.getById(transactionId).orElseThrow();
     }
 

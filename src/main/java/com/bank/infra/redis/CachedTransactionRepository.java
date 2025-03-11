@@ -4,6 +4,8 @@ import com.bank.domain.model.Page;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
 import com.bank.domain.repository.TransactionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,8 @@ import java.util.Optional;
 @Repository("cachedTransactionRepository")
 public class CachedTransactionRepository implements TransactionRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(CachedTransactionRepository.class);
+
     @Autowired
     @Qualifier("defaultTransactionRepository")
     private TransactionRepository delegate;
@@ -31,18 +35,28 @@ public class CachedTransactionRepository implements TransactionRepository {
     @Override
     public void insert(Transaction transaction) {
         delegate.insert(transaction);
-        redisTemplate.delete(String.valueOf(transaction.getId()));
+        redisTemplate.delete(getCacheKey(transaction.getId()));
     }
 
     @Override
     public Optional<Transaction> getById(long id) {
-        var transaction = redisTemplate.opsForValue().get(String.valueOf(id));
+        var key = getCacheKey(id);
+        var transaction = redisTemplate.opsForValue().get(key);
         if (transaction == null) {
-            var optionalAccount = delegate.getById(id);
-            if (optionalAccount.isPresent()) {
-                transaction = optionalAccount.get();
-                redisTemplate.opsForValue().set(String.valueOf(id), transaction, Duration.ofMinutes(cacheTtlMinutes));
+            logger.info("Transaction not found in cache");
+            var optionalTransaction = delegate.getById(id);
+            if (optionalTransaction.isPresent()) {
+                transaction = optionalTransaction.get();
+                redisTemplate.opsForValue().set(key, transaction, Duration.ofMinutes(cacheTtlMinutes));
             }
+        } else {
+            logger.info("Transaction found in cache");
+        }
+        if (transaction != null) {
+            logger.info("Transaction:id={}, from={}, to={}, amount={}", transaction.getId(),
+                    transaction.getFromAccountId(),
+                    transaction.getToAccountId(),
+                    transaction.getAmount());
         }
         return Optional.ofNullable(transaction);
     }
