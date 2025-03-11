@@ -1,10 +1,8 @@
 package com.bank.infra.redis;
 
-import com.bank.domain.model.Account;
 import com.bank.domain.model.Page;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
-import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
