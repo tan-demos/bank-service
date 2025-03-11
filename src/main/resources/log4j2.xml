@@ -5,7 +5,7 @@
                    https://logging.apache.org/xml/ns
                    https://logging.apache.org/xml/ns/log4j-config-2.xsd">
     <Properties>
-        <Property name="defaultPatternLayout">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%F:%L] %C{1.}: %m%n</Property>
+        <Property name="defaultPatternLayout">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%X{traceId}] [%F:%L] %C{1.}: %m%n</Property>
     </Properties>
 
     <Appenders>
