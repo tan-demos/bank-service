@@ -14,8 +14,12 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
+    private final AccountService accountService;
+
     @Autowired
-    private AccountService accountService;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @AutoLogging
     @PostMapping("")

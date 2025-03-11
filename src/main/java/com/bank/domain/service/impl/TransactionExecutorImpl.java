@@ -15,12 +15,15 @@ import java.time.Instant;
 
 @Component
 public class TransactionExecutorImpl implements TransactionExecutor {
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+
     @Autowired
-    @Qualifier("cachedAccountRepository")
-    private AccountRepository accountRepository;
-    @Autowired
-    @Qualifier("cachedTransactionRepository")
-    private TransactionRepository transactionRepository;
+    public TransactionExecutorImpl(@Qualifier("cachedAccountRepository") AccountRepository accountRepository,
+                                   @Qualifier("cachedTransactionRepository") TransactionRepository transactionRepository) {
+        this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
+    }
 
     @Override
     @Transactional(timeout = 3)

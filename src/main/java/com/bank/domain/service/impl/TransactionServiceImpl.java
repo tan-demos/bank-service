@@ -17,17 +17,22 @@ import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
-
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
+    private final AccountRepository accountRepository;
+
+    private final TransactionRepository transactionRepository;
+
+    private final TransactionExecutor transactionExecutor;
+
     @Autowired
-    @Qualifier("cachedAccountRepository")
-    private AccountRepository accountRepository;
-    @Autowired
-    @Qualifier("cachedTransactionRepository")
-    private TransactionRepository transactionRepository;
-    @Autowired
-    private TransactionExecutor transactionExecutor;
+    public TransactionServiceImpl(@Qualifier("cachedAccountRepository") AccountRepository accountRepository,
+                                  @Qualifier("cachedTransactionRepository") TransactionRepository transactionRepository,
+                                  TransactionExecutor transactionExecutor) {
+        this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
+        this.transactionExecutor = transactionExecutor;
+    }
 
     @Override
     public Transaction create(CreateTransactionParams params) {

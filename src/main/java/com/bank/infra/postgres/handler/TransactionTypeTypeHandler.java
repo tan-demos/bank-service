@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 @MappedTypes(TransactionType.class)
 public class TransactionTypeTypeHandler implements TypeHandler<TransactionType> {
     @Override

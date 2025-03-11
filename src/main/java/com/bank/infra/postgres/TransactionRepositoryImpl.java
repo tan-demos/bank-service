@@ -18,10 +18,14 @@ import java.util.Optional;
 
 @Repository("defaultTransactionRepository")
 public class TransactionRepositoryImpl implements TransactionRepository {
-
     private static final Logger logger = LoggerFactory.getLogger(TransactionRepositoryImpl.class);
+
+    private final TransactionMapper mapper;
+
     @Autowired
-    private TransactionMapper mapper;
+    public TransactionRepositoryImpl(TransactionMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public void insert(Transaction transaction) {

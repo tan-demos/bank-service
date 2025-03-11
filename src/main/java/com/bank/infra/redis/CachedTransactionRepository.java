@@ -1,8 +1,10 @@
 package com.bank.infra.redis;
 
+import com.bank.domain.model.Account;
 import com.bank.domain.model.Page;
 import com.bank.domain.model.Transaction;
 import com.bank.domain.model.TransactionStatus;
+import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,18 +21,20 @@ import java.util.Optional;
 
 @Repository("cachedTransactionRepository")
 public class CachedTransactionRepository implements TransactionRepository {
-
     private static final Logger logger = LoggerFactory.getLogger(CachedTransactionRepository.class);
-
+    private final TransactionRepository delegate;
+    private final RedisTemplate<String, Transaction> redisTemplate;
+    private final int cacheTtlMinutes;
     @Autowired
-    @Qualifier("defaultTransactionRepository")
-    private TransactionRepository delegate;
+    public CachedTransactionRepository(@Qualifier("defaultTransactionRepository") TransactionRepository delegate,
+                                   RedisTemplate<String, Transaction> redisTemplate,
+                                   @Value("${com.bank.cache.redis.ttl-minutes}") int cacheTtlMinutes) {
+        this.delegate = delegate;
+        this.redisTemplate = redisTemplate;
+        this.cacheTtlMinutes = cacheTtlMinutes;
 
-    @Autowired
-    private RedisTemplate<String, Transaction> redisTemplate;
-
-    @Value("${com.bank.cache.redis.ttl-minutes}")
-    private int cacheTtlMinutes;
+        logger.info("Cache TTL: {} minutes", this.cacheTtlMinutes);
+    }
 
     @Override
     public void insert(Transaction transaction) {

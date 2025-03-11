@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
     private final static Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    public HealthCheckController(JdbcTemplate jdbcTemplate, RedisTemplate<String, String> redisTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.redisTemplate = redisTemplate;
+    }
 
     @GetMapping("/ping")
     public ResponseEntity<Object> ping() {

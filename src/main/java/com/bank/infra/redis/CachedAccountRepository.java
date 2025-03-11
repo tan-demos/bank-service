@@ -3,6 +3,8 @@ package com.bank.infra.redis;
 import com.bank.domain.model.Account;
 import com.bank.domain.model.Page;
 import com.bank.domain.repository.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,17 +17,21 @@ import java.util.Optional;
 
 @Repository("cachedAccountRepository")
 public class CachedAccountRepository implements AccountRepository {
-
+    private static final Logger logger = LoggerFactory.getLogger(CachedAccountRepository.class);
+    private final AccountRepository delegate;
+    private final RedisTemplate<String, Account> redisTemplate;
+    private final int cacheTtlMinutes;
 
     @Autowired
-    @Qualifier("defaultAccountRepository")
-    private AccountRepository delegate;
+    public CachedAccountRepository(@Qualifier("defaultAccountRepository") AccountRepository delegate,
+                                   RedisTemplate<String, Account> redisTemplate,
+                                   @Value("${com.bank.cache.redis.ttl-minutes}") int cacheTtlMinutes) {
+        this.delegate = delegate;
+        this.redisTemplate = redisTemplate;
+        this.cacheTtlMinutes = cacheTtlMinutes;
 
-    @Autowired
-    private RedisTemplate<String, Account> redisTemplate;
-
-    @Value("${com.bank.cache.redis.ttl-minutes}")
-    private int cacheTtlMinutes;
+        logger.info("Cache TTL: {} minutes", this.cacheTtlMinutes);
+    }
 
     @Override
     public void insert(Account account) {

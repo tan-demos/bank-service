@@ -12,8 +12,13 @@ import java.util.Optional;
 
 @Repository("defaultAccountRepository")
 public class AccountRepositoryImpl implements AccountRepository {
+    private final AccountMapper mapper;
+
     @Autowired
-    private AccountMapper mapper;
+    public AccountRepositoryImpl(AccountMapper mapper) {
+        this.mapper = mapper;
+    }
+
     @Override
     public void insert(Account account) {
         mapper.insert(account);

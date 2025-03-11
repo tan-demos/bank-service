@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
-
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
+    private final TransactionService transactionService;
+
     @Autowired
-    private TransactionService transactionService;
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     @AutoLogging
     @PostMapping("")

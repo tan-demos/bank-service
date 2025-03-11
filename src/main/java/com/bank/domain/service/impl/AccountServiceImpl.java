@@ -17,10 +17,12 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
     private final static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
+    private final AccountRepository accountRepository;
 
     @Autowired
-    @Qualifier("cachedAccountRepository")
-    private AccountRepository accountRepository;
+    public AccountServiceImpl(@Qualifier("cachedAccountRepository") AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public Account add(long id, BigDecimal balance) {
