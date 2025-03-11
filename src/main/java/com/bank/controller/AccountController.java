@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounts")
@@ -36,5 +38,11 @@ public class AccountController {
             throw new AccountNotFoundException(id);
         }
         return AccountUtil.fromDomain(optionalAccount.get());
+    }
+
+    @AutoLogging
+    @GetMapping("")
+    public List<Account> batchGet(@RequestParam("ids") List<Long> ids) {
+        return accountService.batchGet(ids).stream().map(AccountUtil::fromDomain).collect(Collectors.toList());
     }
 }
