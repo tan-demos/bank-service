@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.retry:spring-retry")
+	implementation("org.springframework.kafka:spring-kafka")
 	// Spring Boot Starter for Redis (includes Spring Data Redis and Lettuce by default)
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

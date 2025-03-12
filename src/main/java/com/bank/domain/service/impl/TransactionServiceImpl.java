@@ -1,6 +1,7 @@
 package com.bank.domain.service.impl;
 
 import com.bank.domain.model.*;
+import com.bank.domain.pubsub.Producer;
 import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.repository.TransactionRepository;
 import com.bank.domain.service.TransactionExecutor;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    private static final String TOPIC_TRANSACTION_CREATED = "transaction_created";
 
     private final AccountRepository accountRepository;
 
@@ -25,13 +27,18 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionExecutor transactionExecutor;
 
+    private final Producer producer;
+
+
     @Autowired
     public TransactionServiceImpl(@Qualifier("cachedAccountRepository") AccountRepository accountRepository,
                                   @Qualifier("cachedTransactionRepository") TransactionRepository transactionRepository,
-                                  TransactionExecutor transactionExecutor) {
+                                  TransactionExecutor transactionExecutor,
+                                  Producer producer) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.transactionExecutor = transactionExecutor;
+        this.producer = producer;
     }
 
     @Override
@@ -75,6 +82,8 @@ public class TransactionServiceImpl implements TransactionService {
                 build();
         transactionRepository.insert(transaction);
         logger.info("Created transaction {}", transaction.getId());
+        producer.send(TOPIC_TRANSACTION_CREATED, transaction);
+        logger.info("Published {} event {}", TOPIC_TRANSACTION_CREATED, transaction.getId());
         return transaction;
     }
 
