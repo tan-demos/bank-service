@@ -6,6 +6,7 @@ import com.bank.controller.utils.TransactionUtil;
 import com.bank.domain.model.CreateTransactionParams;
 import com.bank.domain.service.TransactionService;
 import com.bank.exception.TransactionNotFoundException;
+import com.bank.util.ObjectPool;
 import com.bank.util.annotation.AutoLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +17,25 @@ import java.math.BigDecimal;
 @RequestMapping("/transactions")
 public class TransactionController {
     private final TransactionService transactionService;
+    private final ObjectPool<CreateTransactionParams> createTransactionParamsPool;
 
     @Autowired
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
+        this.createTransactionParamsPool = new ObjectPool<>(CreateTransactionParams::new);
     }
 
     @AutoLogging
     @PostMapping("")
     public Transaction create(@RequestBody CreateTransactionRequest request) {
-        var params = CreateTransactionParams.builder().
-                type(TransactionUtil.toDomainType(request.getType())).
-                amount(new BigDecimal(request.getAmount())).
-                fromAccountId(request.getFromAccountId()).
-                toAccountId(request.getToAccountId()).
-                build();
-        return TransactionUtil.fromDomain(transactionService.create(params));
+        var params = createTransactionParamsPool.borrowObject();
+        params.setAmount(new BigDecimal(request.getAmount()));
+        params.setType(TransactionUtil.toDomainType(request.getType()));
+        params.setFromAccountId(request.getFromAccountId());
+        params.setToAccountId(request.getToAccountId());
+        var result = TransactionUtil.fromDomain(transactionService.create(params));
+        createTransactionParamsPool.returnObject(params);
+        return result;
     }
 
     @AutoLogging

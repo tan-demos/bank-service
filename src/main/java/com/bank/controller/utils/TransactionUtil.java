@@ -16,6 +16,17 @@ public class TransactionUtil {
                 .completedAt(transaction.getCompletedAt() != null ? transaction.getCompletedAt().getEpochSecond() : 0);
     }
 
+    public static void populateApiTransaction(com.bank.domain.model.Transaction source, Transaction dest) {
+        dest.setId(source.getId());
+        dest.setType(source.getType().getValue());
+        dest.setFromAccountId(source.getFromAccountId());
+        dest.setToAccountId(source.getToAccountId());
+        dest.setAmount(source.getAmount().toPlainString());
+        dest.setStatus(source.getStatus().getValue());
+        dest.setCreatedAt(source.getCreatedAt() != null ? source.getCreatedAt().getEpochSecond() : 0);
+        dest.setCompletedAt(source.getCompletedAt() != null ? source.getCompletedAt().getEpochSecond() : 0);
+    }
+
     public static TransactionType fromDomainType(com.bank.domain.model.TransactionType type) {
         return switch (type) {
             case DEPOSIT -> TransactionType.DEPOSIT;

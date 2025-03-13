@@ -13,7 +13,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    // importing Spring Security package will work automatically
+    // importing Spring Security package will enable auth check automatically
+    // so we have to disable it
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Allow all requests without authentication

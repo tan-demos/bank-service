@@ -26,5 +26,4 @@ public class Consumer {
         logger.info("Received kafka message: transaction id={}", transaction.getId());
         this.eventPublisher.publishEvent(new TransactionEvent(transaction.getId()));
     }
-
 }
