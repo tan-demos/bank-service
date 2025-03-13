@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
-    private static final String TOPIC_TRANSACTION_CREATED = "transaction_created";
+    private static final String TOPIC_TRANSACTION_CREATED = "transaction-created";
 
     private final AccountRepository accountRepository;
 
@@ -34,7 +34,7 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionServiceImpl(@Qualifier("cachedAccountRepository") AccountRepository accountRepository,
                                   @Qualifier("cachedTransactionRepository") TransactionRepository transactionRepository,
                                   TransactionExecutor transactionExecutor,
-                                  Producer producer) {
+                                  @Qualifier("kafkaProducer") Producer producer) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.transactionExecutor = transactionExecutor;
