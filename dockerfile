@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM gradle:8.12.1-jdk21-corretto AS builder
+FROM gradle:8.12-jdk21-corretto AS builder
 
 WORKDIR /app
 COPY build.gradle settings.gradle ./
