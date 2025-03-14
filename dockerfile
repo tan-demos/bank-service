@@ -2,7 +2,7 @@
 FROM gradle:8.12-jdk21-corretto AS builder
 
 WORKDIR /app
-COPY build.gradle settings.gradle ./
+COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 COPY src ./src
 
