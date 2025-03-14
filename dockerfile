@@ -10,7 +10,7 @@ COPY src ./src
 RUN gradle build -x test
 
 # Stage 2: Create runtime image
-FROM openjdk:25-jdk-slim
+FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
