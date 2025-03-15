@@ -1,4 +1,4 @@
-package com.bank.controller;
+package com.bank.controller.api;
 
 import com.bank.api.model.CreateTransactionRequest;
 import com.bank.api.model.Transaction;
@@ -26,7 +26,7 @@ public class TransactionController {
     }
 
     @AutoLogging
-    @PostMapping("")
+    @PostMapping
     public Transaction create(@RequestBody CreateTransactionRequest request) {
         var params = createTransactionParamsPool.borrowObject();
         params.setAmount(new BigDecimal(request.getAmount()));

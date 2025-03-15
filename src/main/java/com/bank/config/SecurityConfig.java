@@ -1,10 +1,12 @@
 package com.bank.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -12,19 +14,23 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    public SecurityConfig(UserDetailsService userDetailsService, AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+    }
 
-    // importing Spring Security package will enable auth check automatically
-    // so we have to disable it
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Allow all requests without authentication
-                .csrf(AbstractHttpConfigurer::disable); // Disable CSRF protection (optional)
-        return http.build();
-//
-//        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-//                .httpBasic(Customizer.withDefaults());
-//        return http.build();
+        return http
+                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/jwt/home").hasRole("USER")
+//                        .requestMatchers("/jwt/admin").hasRole("ADMIN")
+                        .anyRequest().permitAll())
+//                .formLogin(form -> form.defaultSuccessUrl("/jwt/home"))
+//                .logout(logout -> logout.logoutUrl("/jwt/logout")
+//                        .logoutSuccessUrl("/jwt/login"))
+                .csrf(AbstractHttpConfigurer::disable)
+                .build();
     }
 
     @Bean

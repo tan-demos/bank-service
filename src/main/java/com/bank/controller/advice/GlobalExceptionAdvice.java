@@ -1,4 +1,4 @@
-package com.bank.controller.handler;
+package com.bank.controller.advice;
 
 import com.bank.exception.BadRequestException;
 import com.bank.exception.NotFoundException;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionAdvice {
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);

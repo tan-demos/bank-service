@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -80,5 +83,24 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Page<Account> getPage(int page, int size) {
         return accountRepository.getPage(page, size);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if ("user".equals(username)) {
+            return User.withUsername("user")
+                    .password("{noop}password") // {noop} for plain text; use encoder in production
+                    .roles("USER") // Roles are prefixed with "ROLE_" internally
+                    .build();
+        }
+
+        if ("admin".equals(username)) {
+            return User.withUsername("admin")
+                    .password("{noop}admin123")
+                    .roles("ADMIN", "USER")
+                    .build();
+        }
+
+        throw new UsernameNotFoundException("User not found: " + username);
     }
 }

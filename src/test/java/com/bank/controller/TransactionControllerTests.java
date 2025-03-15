@@ -4,6 +4,7 @@ import com.bank.TestUtil;
 import com.bank.api.model.Transaction;
 import com.bank.api.model.CreateTransactionRequest;
 import com.bank.api.model.TransactionType;
+import com.bank.controller.api.TransactionController;
 import com.bank.domain.service.TransactionService;
 import com.bank.domain.model.CreateTransactionParams;
 import com.bank.exception.TransactionNotFoundException;
@@ -14,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,19 +1,20 @@
-package com.bank.controller.handler;
+package com.bank.controller.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.UUID;
 
 @Component
-public class TraceIdFilter implements Filter {
+public class TraceIdFilter extends OncePerRequestFilter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String traceId = httpRequest.getHeader("X-Trace-Id"); // Check for incoming traceId
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String traceId = request.getHeader("X-Trace-Id"); // Check for incoming traceId
         if (traceId == null || traceId.isEmpty()) {
             traceId = UUID.randomUUID().toString(); // Generate new if not present
         }
@@ -22,7 +23,7 @@ public class TraceIdFilter implements Filter {
         MDC.put("traceId", traceId);
 
         try {
-            chain.doFilter(request, response);
+            filterChain.doFilter(request, response);
         } finally {
             // Clear MDC after request completes
             MDC.clear();

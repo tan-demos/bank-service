@@ -1,4 +1,4 @@
-package com.bank.controller;
+package com.bank.controller.api;
 
 import com.bank.api.model.Account;
 import com.bank.api.model.AddAccountRequest;
@@ -24,7 +24,7 @@ public class AccountController {
     }
 
     @AutoLogging
-    @PostMapping("")
+    @PostMapping
     public Account add(@RequestBody AddAccountRequest request) {
         var balance = request.getBalance() != null ? new BigDecimal(request.getBalance()) : BigDecimal.ZERO;
         return AccountUtil.fromDomain(accountService.add(request.getAccountId(), balance));
