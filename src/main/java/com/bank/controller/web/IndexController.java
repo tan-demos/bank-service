@@ -14,6 +14,6 @@ public class IndexController {
     @GetMapping(value = {"/", "", "/home"})
     public String get(@RequestParam String name, Model model) {
         model.addAttribute("name", name);
-        return "index";
+        return "index"; // refer to resources/templates/index.html
     }
 }
