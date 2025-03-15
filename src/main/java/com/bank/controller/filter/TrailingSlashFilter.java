@@ -17,7 +17,7 @@ public class TrailingSlashFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestUri = request.getRequestURI();
 
-        if (requestUri.endsWith("/")) {
+        if (requestUri.endsWith("/") && requestUri.length() > 1) {
             String newUrl = requestUri.substring(0, requestUri.length() - 1);
             response.setStatus(HttpStatus.MOVED_PERMANENTLY.value());
             response.setHeader(HttpHeaders.LOCATION, newUrl);
