@@ -1,5 +1,8 @@
 package com.bank.controller.api;
 
+import com.bank.api.model.AuthInfo;
+import com.bank.api.model.AuthRequest;
+import com.bank.api.model.AuthResponse;
 import com.bank.util.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,14 +30,16 @@ public class JwtAuthController {
     }
 
     @PostMapping("/auth")
-    public String createToken(@RequestParam String username, @RequestParam String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return jwtHelper.generateToken(userDetails);
+    public AuthResponse auth(@RequestBody AuthRequest request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        var token = jwtHelper.generateToken(userDetails);
+        return new AuthResponse().token(token);
     }
 
-    @GetMapping("/auth-user")
-    public String getCurrentUser() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    @GetMapping("/auth-info")
+    public AuthInfo getAuthInfo() {
+        var name = SecurityContextHolder.getContext().getAuthentication().getName();
+        return new AuthInfo().username(name);
     }
 }

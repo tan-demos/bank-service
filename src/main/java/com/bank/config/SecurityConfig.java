@@ -4,7 +4,6 @@ import com.bank.controller.auth.UserDetailsServiceImpl;
 import com.bank.controller.filter.JwtRequestFilter;
 import com.bank.domain.model.Role;
 import com.bank.util.JwtHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
