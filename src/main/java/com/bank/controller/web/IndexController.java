@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class IndexController {
     @AutoLogging
-    @GetMapping(value = {"/", "", "/home"})
-    public String get(@RequestParam String name, Model model) {
-        model.addAttribute("name", name);
+    @GetMapping(value = {"/", "/index.html", "index.htm"})
+    public String get() {
         return "index"; // refer to resources/templates/index.html
     }
 }
