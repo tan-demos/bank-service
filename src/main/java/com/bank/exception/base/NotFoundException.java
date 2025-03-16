@@ -1,6 +1,6 @@
-package com.bank.exception;
+package com.bank.exception.base;
 
-public class NotFoundException extends RuntimeException {
+public class NotFoundException extends Exception {
     public NotFoundException() {
         super();
     }

@@ -7,6 +7,8 @@ import com.bank.domain.repository.TransactionRepository;
 import com.bank.domain.service.TransactionExecutor;
 import com.bank.domain.service.TransactionService;
 import com.bank.exception.*;
+import com.bank.exception.base.InternalServerErrorException;
+import com.bank.exception.base.InvalidArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,35 +44,35 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction create(CreateTransactionParams params) {
+    public Transaction create(CreateTransactionParams params) throws InvalidArgumentException {
         if (params.getType() != TransactionType.TRANSFER) {
-            throw new BadRequestException("Invalid transaction type: only support transfer");
+            throw new InvalidArgumentException("Invalid transaction type: only support transfer");
         }
 
         if (params.getFromAccountId() <= 0) {
-            throw new BadRequestException("Invalid param: fromAccountId");
+            throw new InvalidArgumentException("Invalid param: fromAccountId");
         }
 
         if (params.getToAccountId() <= 0) {
-            throw new BadRequestException("Invalid param: toAccountId");
+            throw new InvalidArgumentException("Invalid param: toAccountId");
         }
 
         if (params.getFromAccountId() == params.getToAccountId()) {
-            throw new BadRequestException("Cannot transfer to the same account");
+            throw new InvalidArgumentException("Cannot transfer to the same account");
         }
 
         if (params.getAmount() == null || params.getAmount().signum() <= 0) {
-            throw new BadRequestException("Invalid param: amount");
+            throw new InvalidArgumentException("Invalid param: amount");
         }
 
         var fromAccount = accountRepository.getById(params.getFromAccountId())
-                .orElseThrow(() -> new AccountNotFoundException(params.getFromAccountId()));
+                .orElseThrow(() -> new InvalidArgumentException("Invalid fromAccountId: account doesn't exist"));
         if (fromAccount.getBalance().compareTo(params.getAmount()) < 0) {
             throw new InsufficientBalanceException(fromAccount.getId());
         }
 
         accountRepository.getById(params.getToAccountId())
-                .orElseThrow(() -> new AccountNotFoundException(params.getFromAccountId()));
+                .orElseThrow(() -> new InvalidArgumentException("Invalid toAccountId: account doesn't exist"));
 
         var transaction = Transaction.builder().
                 type(params.getType()).
@@ -88,10 +90,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction submit(long transactionId) {
+    public Transaction submit(long transactionId) throws InvalidArgumentException, InternalServerErrorException {
         var optionalTransaction = transactionRepository.getById(transactionId);
         if (optionalTransaction.isEmpty()) {
-            throw new TransactionNotFoundException(transactionId);
+            throw new InvalidArgumentException("Invalid transactionId: transaction doesn't exist");
         }
 
         var transaction = optionalTransaction.get();

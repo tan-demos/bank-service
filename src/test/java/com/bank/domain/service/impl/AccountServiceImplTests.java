@@ -3,7 +3,7 @@ package com.bank.domain.service.impl;
 import com.bank.TestUtil;
 import com.bank.domain.model.Account;
 import com.bank.domain.repository.AccountRepository;
-import com.bank.exception.BadRequestException;
+import com.bank.exception.base.InvalidArgumentException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class AccountServiceImplTests {
     private AccountServiceImpl accountService;
 
     @Test
-    void testAddAccount() {
+    void testAddAccount() throws InvalidArgumentException {
         Account account = TestUtil.randomDomainAccount();
         Account result = accountService.add(account.getId(), account.getBalance());
         assertNotNull(result);
@@ -36,7 +36,7 @@ public class AccountServiceImplTests {
 
     @Test
     void testAddAccountWithNegativeBalance() {
-        assertThrows(BadRequestException.class, () -> accountService.add(TestUtil.randomPositiveLong(), TestUtil.randomNegativeDecimal()));
+        assertThrows(InvalidArgumentException.class, () -> accountService.add(TestUtil.randomPositiveLong(), TestUtil.randomNegativeDecimal()));
         verify(accountRepository, never()).insert(any(Account.class));
     }
 

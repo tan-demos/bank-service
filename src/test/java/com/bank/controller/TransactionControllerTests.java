@@ -8,6 +8,8 @@ import com.bank.controller.api.TransactionController;
 import com.bank.domain.service.TransactionService;
 import com.bank.domain.model.CreateTransactionParams;
 import com.bank.exception.TransactionNotFoundException;
+import com.bank.exception.base.InternalServerErrorException;
+import com.bank.exception.base.InvalidArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +49,7 @@ public class TransactionControllerTests {
     }
 
     @Test
-    void testCreateTransaction() {
+    void testCreateTransaction() throws InvalidArgumentException {
         when(transactionService.create(any(CreateTransactionParams.class))).thenReturn(domainTransaction);
         Transaction transaction = transactionController.create(createTransactionRequest);
         verifyReturnedTransaction(transaction);
@@ -55,14 +57,14 @@ public class TransactionControllerTests {
     }
 
     @Test
-    void testSubmitTransaction() {
+    void testSubmitTransaction() throws InvalidArgumentException, InternalServerErrorException {
         when(transactionService.submit(anyLong())).thenReturn(domainTransaction);
         verifyReturnedTransaction(transactionController.submit(transactionId));
         verify(transactionService, times(1)).submit(transactionId);
     }
 
     @Test
-    void testGetTransactionById() {
+    void testGetTransactionById() throws TransactionNotFoundException {
         when(transactionService.getById(transactionId)).thenReturn(Optional.of(domainTransaction));
         verifyReturnedTransaction(transactionController.getById(transactionId));
         verify(transactionService, times(1)).getById(transactionId);

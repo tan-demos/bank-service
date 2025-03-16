@@ -4,15 +4,12 @@ import com.bank.domain.model.Account;
 import com.bank.domain.model.Page;
 import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.service.AccountService;
-import com.bank.exception.BadRequestException;
+import com.bank.exception.base.InvalidArgumentException;
 import com.bank.util.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,9 +32,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account add(long id, BigDecimal balance) {
+    public Account add(long id, BigDecimal balance) throws InvalidArgumentException {
         if (id <= 0) {
-            throw new BadRequestException("Invalid param: accountId");
+            throw new InvalidArgumentException("Invalid param: accountId");
         }
 
         if (balance == null) {
@@ -45,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         if (balance.signum() < 0) {
-            throw new BadRequestException("Invalid param: balance " + balance.toPlainString());
+            throw new InvalidArgumentException("Invalid param: balance " + balance.toPlainString());
         }
         var account = Account.builder().id(id).balance(balance).build();
         accountRepository.insert(account);

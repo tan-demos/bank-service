@@ -1,6 +1,8 @@
 package com.bank.exception;
 
-public class InsufficientBalanceException extends BadRequestException {
+import com.bank.exception.base.InvalidArgumentException;
+
+public class InsufficientBalanceException extends InvalidArgumentException {
     public InsufficientBalanceException(long accountId) {
         super(String.format("insufficient balance of account %d", accountId));
     }

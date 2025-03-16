@@ -6,6 +6,7 @@ import com.bank.domain.model.TransactionStatus;
 import com.bank.domain.repository.AccountRepository;
 import com.bank.domain.repository.TransactionRepository;
 import com.bank.exception.*;
+import com.bank.exception.base.InternalServerErrorException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +71,7 @@ public class TransactionExecutorImplTests {
     void testExecuteTransactionAccountNotFound() {
         when(accountRepository.getBalanceForUpdate(transaction.getFromAccountId())).thenReturn(Optional.empty());
 
-        assertThrows(AccountNotFoundException.class, () -> transactionExecutor.execute(transaction));
+        assertThrows(InternalServerErrorException.class, () -> transactionExecutor.execute(transaction));
 
         verify(accountRepository, times(1)).getBalanceForUpdate(transaction.getFromAccountId());
         verify(accountRepository, never()).changeBalance(anyLong(), any());

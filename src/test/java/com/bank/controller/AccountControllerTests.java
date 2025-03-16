@@ -6,6 +6,7 @@ import com.bank.api.model.AddAccountRequest;
 import com.bank.controller.api.AccountController;
 import com.bank.domain.service.AccountService;
 import com.bank.exception.AccountNotFoundException;
+import com.bank.exception.base.InvalidArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    void testAddAccount() {
+    void testAddAccount() throws InvalidArgumentException {
         when(accountService.add(anyLong(), any(BigDecimal.class))).thenReturn(domainAccount);
 
         Account account = accountController.add(addAccountRequest);
@@ -61,7 +62,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    void testAddAccountWithNullBalance() {
+    void testAddAccountWithNullBalance() throws InvalidArgumentException {
         addAccountRequest.setBalance(null);
         domainAccount.setBalance(BigDecimal.ZERO);
 
@@ -77,7 +78,7 @@ public class AccountControllerTests {
     }
 
     @Test
-    void testGetAccount() {
+    void testGetAccount() throws AccountNotFoundException {
         when(accountService.getById(domainAccount.getId())).thenReturn(Optional.of(domainAccount));
 
         Account account = accountController.get(domainAccount.getId());

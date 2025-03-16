@@ -5,6 +5,7 @@ import com.bank.api.model.AddAccountRequest;
 import com.bank.controller.utils.AccountUtil;
 import com.bank.domain.service.AccountService;
 import com.bank.exception.AccountNotFoundException;
+import com.bank.exception.base.InvalidArgumentException;
 import com.bank.util.annotation.AutoLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +26,14 @@ public class AccountController {
 
     @AutoLogging
     @PostMapping
-    public Account add(@RequestBody AddAccountRequest request) {
+    public Account add(@RequestBody AddAccountRequest request) throws InvalidArgumentException {
         var balance = request.getBalance() != null ? new BigDecimal(request.getBalance()) : BigDecimal.ZERO;
         return AccountUtil.fromDomain(accountService.add(request.getAccountId(), balance));
     }
 
     @AutoLogging
     @GetMapping("/{id}")
-    public Account get(@PathVariable long id) {
+    public Account get(@PathVariable long id) throws AccountNotFoundException {
         var optionalAccount = accountService.getById(id);
         if (optionalAccount.isEmpty()) {
             throw new AccountNotFoundException(id);

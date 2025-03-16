@@ -5,6 +5,8 @@ import com.bank.api.model.Transaction;
 import com.bank.controller.utils.TransactionUtil;
 import com.bank.domain.model.CreateTransactionParams;
 import com.bank.domain.service.TransactionService;
+import com.bank.exception.base.InternalServerErrorException;
+import com.bank.exception.base.InvalidArgumentException;
 import com.bank.exception.TransactionNotFoundException;
 import com.bank.util.ObjectPool;
 import com.bank.util.annotation.AutoLogging;
@@ -27,7 +29,7 @@ public class TransactionController {
 
     @AutoLogging
     @PostMapping
-    public Transaction create(@RequestBody CreateTransactionRequest request) {
+    public Transaction create(@RequestBody CreateTransactionRequest request) throws InvalidArgumentException {
         var params = createTransactionParamsPool.borrowObject();
         params.setAmount(new BigDecimal(request.getAmount()));
         params.setType(TransactionUtil.toDomainType(request.getType()));
@@ -40,13 +42,13 @@ public class TransactionController {
 
     @AutoLogging
     @PostMapping("/{id}/submit")
-    public Transaction submit(@PathVariable long id) {
+    public Transaction submit(@PathVariable long id) throws InvalidArgumentException, InternalServerErrorException {
         return TransactionUtil.fromDomain(transactionService.submit(id));
     }
 
     @AutoLogging
     @GetMapping("/{id}")
-    public Transaction getById(@PathVariable long id) {
+    public Transaction getById(@PathVariable long id) throws TransactionNotFoundException {
         var optionalTransaction = transactionService.getById(id);
         if (optionalTransaction.isEmpty()) {
             throw new TransactionNotFoundException(id);
